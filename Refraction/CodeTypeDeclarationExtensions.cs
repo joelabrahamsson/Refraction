@@ -50,7 +50,7 @@ namespace Refraction
             return type;
         }
 
-        public static CodeTypeDeclaration WithProperty<TProperty>(this CodeTypeDeclaration type, Action<CodeMemberProperty> propertyExpression)
+        public static CodeTypeDeclaration Property<TProperty>(this CodeTypeDeclaration type, Action<CodeMemberProperty> propertyExpression)
         {
             var property = new CodeMemberProperty();
             property.Type = new CodeTypeReference(typeof(TProperty));
@@ -61,9 +61,9 @@ namespace Refraction
             return type;
         }
 
-        public static CodeTypeDeclaration WithAutomaticProperty<TProperty>(this CodeTypeDeclaration type, string name)
+        public static CodeTypeDeclaration AutomaticProperty<TProperty>(this CodeTypeDeclaration type, string name)
         {
-            type.WithAutomaticProperty<TProperty>(x =>
+            type.AutomaticProperty<TProperty>(x =>
                 {
                     x.Name = name;
                 });
@@ -71,9 +71,9 @@ namespace Refraction
             return type;
         }
 
-        public static CodeTypeDeclaration WithAutomaticProperty<TProperty>(this CodeTypeDeclaration type, Action<CodeMemberProperty> propertyExpression)
+        public static CodeTypeDeclaration AutomaticProperty<TProperty>(this CodeTypeDeclaration type, Action<CodeMemberProperty> propertyExpression)
         {
-            type.WithProperty<TProperty>(property =>
+            type.Property<TProperty>(property =>
                 {
                     propertyExpression(property);
 
@@ -142,7 +142,7 @@ namespace Refraction
             return new CodeAssignStatement(fieldReference, valueStatement);
         }
 
-        public static CodeTypeDeclaration WithVoidMethod(this CodeTypeDeclaration type, string name)
+        public static CodeTypeDeclaration VoidMethod(this CodeTypeDeclaration type, string name)
         {
             var method = new CodeMemberMethod();
             method.Name = name;
@@ -151,7 +151,7 @@ namespace Refraction
             return type;
         }
 
-        public static CodeTypeDeclaration WithMethod(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
+        public static CodeTypeDeclaration Method(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
         {
             var method = new CodeMemberMethod();
             method.Attributes = MemberAttributes.Public;

@@ -49,5 +49,11 @@ namespace Refraction
             property.Attributes = property.Attributes | MemberAttributes.Static;
             return property;
         }
+
+        public static CodeMemberProperty GetterBody(this CodeMemberProperty property, string methodBody)
+        {
+            property.GetStatements.Add(new CodeSnippetExpression(methodBody));
+            return property;
+        }
     }
 }

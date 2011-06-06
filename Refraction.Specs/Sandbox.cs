@@ -7,6 +7,33 @@ using Machine.Specifications;
 
 namespace Refraction.Specs
 {
+    public class given_property_with_snippet_implementation
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static string propertyName = "PropertyName";
+        static string expected = "Hey baberiba";
+        
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+                {
+                    with.Class(className)
+                        .Property<string>(x =>
+                            {
+                                x.Named(propertyName)
+                                    .GetterBody(string.Format("return \"{0}\";", expected));
+                            });
+                });        
+        };
+
+        It should_create_property_returning_expected_value
+            = () => 
+                assembly.GetTypeInstance(className)
+                .InvokeMember<string>(propertyName, BindingFlags.GetProperty)
+                        .ShouldEqual(expected);
+    }
+
     [Subject(typeof(AssemblyDefinition), "BuildAssembly method")]
     public class sandbox
     {
@@ -20,8 +47,8 @@ namespace Refraction.Specs
                     .Inheriting<NullReferenceException>()
                     .Implementing<IDisposable>()
                     .AnnotatedWith<DebuggerDisplayAttribute>(new { Name = "Some text" }, "value")
-                    .WithVoidMethod("Dispose")
-                    .WithAutomaticProperty<string>(x =>
+                    .VoidMethod("Dispose")
+                    .AutomaticProperty<string>(x =>
                     {
                         x.Name = "MainBody";
                         x.AnnotatedWith<DebuggerDisplayAttribute>(new { Name = "Some text" }, "value");
@@ -31,12 +58,12 @@ namespace Refraction.Specs
             assembly2 = Create.Assembly(with =>
             {
                 with.Class("MyClass")
-                    .WithAutomaticProperty<bool>(x =>
+                    .AutomaticProperty<bool>(x =>
                     {
                         x.Named("ExecuteHasBeenCalled");
                         x.Static();
                     })
-                    .WithMethod(x =>
+                    .Method(x =>
                     {
                         x.Named("Execute")
                             .Body("ExecuteHasBeenCalled = true;");
