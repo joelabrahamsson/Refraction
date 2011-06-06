@@ -39,11 +39,6 @@ namespace Refraction
             CompilerParameters.ReferencedAssemblies.Add(assemblyName);
         }
 
-        public string GetCode()
-        {
-            return "";
-        }
-
         void AddAssemblyReference(Type type)
         {
             ReferencedAssemblies.Add(type.Assembly.GetName().Name + ".dll");
@@ -76,6 +71,14 @@ namespace Refraction
                     foreach (var referencedType in type.GetReferencedTypes())
                     {
                         AddAssemblyReference(referencedType);
+                    }
+
+                    foreach (CodeTypeMember member in type.Members)
+                    {
+                        foreach (var referencedType1 in member.GetReferencedTypes())
+                        {
+                            AddAssemblyReference(referencedType1);
+                        }
                     }
                 }
             }

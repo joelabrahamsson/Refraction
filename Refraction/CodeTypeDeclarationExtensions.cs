@@ -30,9 +30,14 @@ namespace Refraction
             return type.AnnotatedWith<TAttribute>(new object());
         }
 
-        public static CodeTypeDeclaration AnnotatedWith<TAttribute>(this CodeTypeDeclaration type, object parameters)
+        public static CodeTypeDeclaration AnnotatedWith<TAttribute>(this CodeTypeDeclaration type, object parameters, params object[] constructorParams)
         {
-            var attribute = new CodeAttributeDeclaration(new CodeTypeReference(typeof (TAttribute)));
+            var ctorParams = new CodeAttributeArgument[constructorParams.Length];
+            for (int i = 0; i < constructorParams.Length; i++)
+            {
+                ctorParams[i] = new CodeAttributeArgument(null, new CodePrimitiveExpression(constructorParams[i]));
+            }
+            var attribute = new CodeAttributeDeclaration(new CodeTypeReference(typeof (TAttribute)), ctorParams);
             foreach (var propertyInfo in parameters.GetType().GetProperties())
             {
                 var parameterValue = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);

@@ -31,34 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\..\Page-Type-Builder\build\PageTypeBuilder-2-CTP\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="EPiServer, Version=6.0.530.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Program Files (x86)\EPiServer\CMS\6.0.530.0\bin\EPiServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EPiServer.BaseLibrary, Version=6.0.530.0, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Program Files (x86)\EPiServer\CMS\6.0.530.0\bin\EPiServer.BaseLibrary.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="EPiServer.Framework, Version=6.0.318.113, Culture=neutral, PublicKeyToken=8fe83dea738b45b7, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Program Files (x86)\EPiServer\Framework\6.0.318.113\bin\EPiServer.Framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Program Files (x86)\EPiServer\CMS\6.0.530.0\bin\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Machine.Specifications">
       <HintPath>..\packages\Machine.Specifications.0.4.13.0\lib\Machine.Specifications.dll</HintPath>
-    </Reference>
-    <Reference Include="PageTypeBuilder, Version=1.9.1.0, Culture=neutral, PublicKeyToken=6fb8762af0e6dbed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Page-Type-Builder\PageTypeBuilder\bin\Release\PageTypeBuilder.dll</HintPath>
-    </Reference>
-    <Reference Include="PageTypeBuilder.Migrations">
-      <HintPath>..\..\Page-Type-Builder\PageTypeBuilder.Migrations\bin\Debug\PageTypeBuilder.Migrations.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
