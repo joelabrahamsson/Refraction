@@ -1,0 +1,7 @@
+<Configuration>
+  <Daemon.SolutionSettings>
+    <SkipFilesAndFolders>
+      <Item>0203D3AC-174E-4DDF-887C-F10D25A34E06/f:AssemblyDefinition.cs</Item>
+    </SkipFilesAndFolders>
+  </Daemon.SolutionSettings>
+</Configuration>

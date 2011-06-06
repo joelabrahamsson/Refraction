@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Refraction", "Refraction\Refraction.csproj", "{0203D3AC-174E-4DDF-887C-F10D25A34E06}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Refraction.Specs", "Refraction.Specs\Refraction.Specs.csproj", "{DFDD924B-43BA-47CD-B79A-1EE874DAD91B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0203D3AC-174E-4DDF-887C-F10D25A34E06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0203D3AC-174E-4DDF-887C-F10D25A34E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0203D3AC-174E-4DDF-887C-F10D25A34E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0203D3AC-174E-4DDF-887C-F10D25A34E06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFDD924B-43BA-47CD-B79A-1EE874DAD91B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFDD924B-43BA-47CD-B79A-1EE874DAD91B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFDD924B-43BA-47CD-B79A-1EE874DAD91B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFDD924B-43BA-47CD-B79A-1EE874DAD91B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
