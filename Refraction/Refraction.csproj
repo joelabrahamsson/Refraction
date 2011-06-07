@@ -40,6 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SolutionInfo.cs">
+      <Link>Properties\SolutionInfo.cs</Link>
+    </Compile>
     <Compile Include="AssemblyDefinition.cs" />
     <Compile Include="AssemblyExtensions.cs" />
     <Compile Include="CodeCompileUnitExtensions.cs" />
