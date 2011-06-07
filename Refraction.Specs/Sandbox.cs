@@ -34,7 +34,7 @@ namespace Refraction.Specs
                         .ShouldEqual(expected);
     }
 
-    public class scenario_with_property_with_backing_field
+    public class property_with_backing_field
     {
         static Assembly assembly;
         static string className = "ClassName";
@@ -60,6 +60,35 @@ namespace Refraction.Specs
             object instance = assembly.GetTypeInstance(className);
             instance.InvokeMember<string>(propertyName, BindingFlags.SetProperty, expected);
             actual = instance.InvokeMember<string>(propertyName, BindingFlags.GetProperty);
+        };
+
+        private It should_create_member_with_specified_name
+            = () =>
+              actual.ShouldEqual(expected);
+    }
+
+    public class method_with_parameter
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static string verificationPropertyName = "parameterValue";
+        static string methodName = "methodName";
+        static string expected = "Hey baberiba";
+        static string actual;
+
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with => 
+                with.Class(className)
+                    .AutomaticProperty<string>(verificationPropertyName)
+                    .Method(x => 
+                        x.Named(methodName)
+                        .Parameter<string>("parameter")
+                        .Body("{0} = {1};", verificationPropertyName, "parameter")));
+
+            object instance = assembly.GetTypeInstance(className);
+            instance.InvokeMember<string>(methodName, BindingFlags.InvokeMethod, expected);
+            actual = instance.InvokeMember<string>(verificationPropertyName, BindingFlags.GetProperty);
         };
 
         private It should_create_member_with_specified_name

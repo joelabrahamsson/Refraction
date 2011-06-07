@@ -27,5 +27,10 @@ namespace Refraction
             method.Statements.Add(new CodeSnippetExpression(methodBody));
             return method;
         }
+
+        public static CodeMemberMethod Body(this CodeMemberMethod method, string format, params object[] args)
+        {
+            return method.Body(string.Format(format, args));
+        }
     }
 }
