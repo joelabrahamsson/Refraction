@@ -48,7 +48,7 @@ namespace Refraction.Specs
             assembly = Create.Assembly(with =>
             {
                 with.Class(className)
-                    .PrivateField<string>(x => x.Name = fieldName)
+                    .PrivateField<string>(x => x.Named(fieldName))
                     .Property<string>(x =>
                         {
                             x.Name = propertyName;

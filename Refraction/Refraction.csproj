@@ -43,6 +43,7 @@
     <Compile Include="AssemblyDefinition.cs" />
     <Compile Include="AssemblyExtensions.cs" />
     <Compile Include="CodeCompileUnitExtensions.cs" />
+    <Compile Include="CodeMemberFieldExtensions.cs" />
     <Compile Include="CodeMemberMethodExtensions.cs" />
     <Compile Include="CodeMemberPropertyExtensions.cs" />
     <Compile Include="CodeNamespaceExtensions.cs" />
