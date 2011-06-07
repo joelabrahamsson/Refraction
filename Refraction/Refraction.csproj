@@ -49,6 +49,7 @@
     <Compile Include="CodeMemberFieldExtensions.cs" />
     <Compile Include="CodeMemberMethodExtensions.cs" />
     <Compile Include="CodeMemberPropertyExtensions.cs" />
+    <Compile Include="CollectionExtensions.cs" />
     <Compile Include="CodeNamespaceExtensions.cs" />
     <Compile Include="CodeObjectExtensions.cs" />
     <Compile Include="CodeTypeDeclarationExtensions.cs" />

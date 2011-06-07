@@ -64,24 +64,7 @@ namespace Refraction
 
         public Assembly BuildAssembly()
         {
-            foreach (CodeNamespace ns in Namespaces)
-            {
-                foreach (CodeTypeDeclaration type in ns.Types)
-                {
-                    foreach (var referencedType in type.GetReferencedTypes())
-                    {
-                        AddAssemblyReference(referencedType);
-                    }
-
-                    foreach (CodeTypeMember member in type.Members)
-                    {
-                        foreach (var referencedType1 in member.GetReferencedTypes())
-                        {
-                            AddAssemblyReference(referencedType1);
-                        }
-                    }
-                }
-            }
+            GetReferencedTypes().ForEach(AddAssemblyReference);
 
             CSharpCodeProvider provider =
               new CSharpCodeProvider();
@@ -100,6 +83,30 @@ namespace Refraction
             }
 
             return results.CompiledAssembly;
+        }
+
+        private List<Type> GetReferencedTypes()
+        {
+            var referencedTypes = new List<Type>();
+            foreach (CodeNamespace ns in Namespaces)
+            {
+                foreach (CodeTypeDeclaration type in ns.Types)
+                {
+                    foreach (var referencedType in type.GetReferencedTypes())
+                    {
+                        referencedTypes.Add(referencedType);
+                    }
+
+                    foreach (CodeTypeMember member in type.Members)
+                    {
+                        foreach (var referencedType in member.GetReferencedTypes())
+                        {
+                            referencedTypes.Add(referencedType);
+                        }
+                    }
+                }
+            }
+            return referencedTypes.Distinct().ToList();
         }
     }
 }
