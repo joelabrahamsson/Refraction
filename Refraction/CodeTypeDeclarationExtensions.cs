@@ -159,6 +159,16 @@ namespace Refraction
             return type;
         }
 
+        public static CodeTypeDeclaration Method<TReturnType>(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
+        {
+            var method = new CodeMemberMethod();
+            method.Attributes = MemberAttributes.Public;
+            method.ReturnType = new CodeTypeReference(typeof(TReturnType));
+            methodExpression(method);
+            type.Members.Add(method);
+            return type;
+        }
+
         public static CodeTypeDeclaration PrivateField<TField>(this CodeTypeDeclaration type, Action<CodeMemberField> fieldExpression)
         {
             var field = new CodeMemberField();

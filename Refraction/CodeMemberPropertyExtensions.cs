@@ -56,10 +56,30 @@ namespace Refraction
             return property;
         }
 
+        public static CodeMemberProperty GetterBody(this CodeMemberProperty property, string format, params object[] args)
+        {
+            return property.GetterBody(string.Format(format, args));
+        }
+
+        public static CodeMemberProperty Returning(this CodeMemberProperty property, string stringConstant)
+        {
+            return property.GetterBody("return \"{0}\";", stringConstant);   
+        }
+
+        public static CodeMemberProperty Returning(this CodeMemberProperty property, bool value)
+        {
+            return property.GetterBody("return {0};", value.ToString().ToLower());
+        }
+
         public static CodeMemberProperty SetterBody(this CodeMemberProperty property, string methodBody)
         {
             property.SetStatements.Add(new CodeSnippetExpression(methodBody));
             return property;
+        }
+
+        public static CodeMemberProperty SetterBody(this CodeMemberProperty property, string format, params object[] args)
+        {
+            return property.SetterBody(string.Format(format, args));
         }
     }
 }
