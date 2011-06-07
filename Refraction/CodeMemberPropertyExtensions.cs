@@ -55,5 +55,11 @@ namespace Refraction
             property.GetStatements.Add(new CodeSnippetExpression(methodBody));
             return property;
         }
+
+        public static CodeMemberProperty SetterBody(this CodeMemberProperty property, string methodBody)
+        {
+            property.SetStatements.Add(new CodeSnippetExpression(methodBody));
+            return property;
+        }
     }
 }

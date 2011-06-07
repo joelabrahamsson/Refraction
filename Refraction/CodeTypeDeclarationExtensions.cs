@@ -55,7 +55,6 @@ namespace Refraction
             var property = new CodeMemberProperty();
             property.Type = new CodeTypeReference(typeof(TProperty));
             property.Attributes = MemberAttributes.Public;
-            //type.AddAssemblyReference<TProperty>();
             propertyExpression(property);
             type.Members.Add(property);
             return type;
@@ -157,6 +156,16 @@ namespace Refraction
             method.Attributes = MemberAttributes.Public;
             methodExpression(method);
             type.Members.Add(method);
+            return type;
+        }
+
+        public static CodeTypeDeclaration PrivateField<TField>(this CodeTypeDeclaration type, Action<CodeMemberField> fieldExpression)
+        {
+            var field = new CodeMemberField();
+            field.Type = new CodeTypeReference(typeof(TField));
+            field.Attributes = MemberAttributes.Private;
+            fieldExpression(field);
+            type.Members.Add(field);
             return type;
         }
     }

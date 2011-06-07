@@ -7,7 +7,7 @@ using Machine.Specifications;
 
 namespace Refraction.Specs
 {
-    public class given_property_with_snippet_implementation
+    public class given_property_with_getter_snippet_implementation
     {
         static Assembly assembly;
         static string className = "ClassName";
@@ -32,6 +32,39 @@ namespace Refraction.Specs
                 assembly.GetTypeInstance(className)
                 .InvokeMember<string>(propertyName, BindingFlags.GetProperty)
                         .ShouldEqual(expected);
+    }
+
+    public class scenario_with_property_with_backing_field
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static string propertyName = "PropertyName";
+        static string fieldName = "myField";
+        static string expected = "Hey baberiba";
+        static string actual;
+        
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+            {
+                with.Class(className)
+                    .PrivateField<string>(x => x.Name = fieldName)
+                    .Property<string>(x =>
+                        {
+                            x.Name = propertyName;
+                            x.GetterBody(string.Format("return {0};", fieldName));
+                            x.SetterBody(string.Format("{0} = value;", fieldName));
+                        });
+            });
+
+            object instance = assembly.GetTypeInstance(className);
+            instance.InvokeMember<string>(propertyName, BindingFlags.SetProperty, expected);
+            actual = instance.InvokeMember<string>(propertyName, BindingFlags.GetProperty);
+        };
+
+        private It should_create_member_with_specified_name
+            = () =>
+              actual.ShouldEqual(expected);
     }
 
     [Subject(typeof(AssemblyDefinition), "BuildAssembly method")]
