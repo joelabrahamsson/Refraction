@@ -7,12 +7,24 @@ namespace Refraction
 {
     public static class CodeTypeDeclarationExtensions
     {
+        public static CodeTypeDeclaration Abstract(this CodeTypeDeclaration type)
+        {
+            type.Attributes = type.Attributes | MemberAttributes.Abstract;
+            return type;
+        }
+
         public static CodeTypeDeclaration Inheriting<TBase>(this CodeTypeDeclaration type)
         {
             type.BaseTypes.Add(typeof(TBase));
 
             type.AddReferencedType<TBase>();
 
+            return type;
+        }
+
+        public static CodeTypeDeclaration Inheriting(this CodeTypeDeclaration type, string baseClassName)
+        {
+            type.BaseTypes.Add(baseClassName);
             return type;
         }
 

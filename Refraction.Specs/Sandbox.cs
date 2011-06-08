@@ -16,15 +16,11 @@ namespace Refraction.Specs
         
         Establish context = () =>
         {
-            assembly = Create.Assembly(with =>
-                {
-                    with.Class(className)
-                        .Property<string>(x =>
-                            {
-                                x.Named(propertyName)
-                                    .GetterBody(string.Format("return \"{0}\";", expected));
-                            });
-                });        
+            assembly = Create.Assembly(with => 
+                with.Class(className)
+                    .Property<string>(x => 
+                        x.Named(propertyName)
+                         .GetterBody("return \"{0}\";", expected)));        
         };
 
         It should_create_property_returning_expected_value
