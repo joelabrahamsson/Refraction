@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -35,7 +36,7 @@ namespace Refraction.Specs
             assembly = Create.Assembly(with =>
                 with.Class(className)
                     .Abstract()
-                    .Method(x =>
+                    .PublicMethod(x =>
                     x.Named(methodName)
                      .Abstract()));
         };
@@ -86,6 +87,28 @@ namespace Refraction.Specs
 
         It should_create_class_implementing_the_interface
             = () => assembly.GetTypeNamed(className).GetInterfaces().ShouldContain(typeof (IDisposable));
+    }
+
+    public class automatic_interface_with_property_implementation
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static Exception thrownException;
+
+        Establish context = () =>
+        {
+            thrownException = Catch.Exception(() =>
+                assembly = Create.Assembly(with =>
+                    with.Class(className)
+                        .AutoImplementing<IDictionary>()));
+        };
+
+        It should_compile
+            = () =>
+              thrownException.ShouldBeNull();
+
+        It should_create_class_implementing_the_interface
+            = () => assembly.GetTypeNamed(className).GetInterfaces().ShouldContain(typeof(IDictionary));
     }
 
     public class given_property_with_getter_snippet_implementation
@@ -158,7 +181,7 @@ namespace Refraction.Specs
             assembly = Create.Assembly(with => 
                 with.Class(className)
                     .AutomaticProperty<string>(verificationPropertyName)
-                    .Method(x => 
+                    .PublicMethod(x => 
                         x.Named(methodName)
                         .Parameter<string>("parameter")
                         .Body("{0} = {1};", verificationPropertyName, "parameter")));
@@ -202,7 +225,7 @@ namespace Refraction.Specs
                         x.Named("ExecuteHasBeenCalled");
                         x.Static();
                     })
-                    .Method(x =>
+                    .PublicMethod(x =>
                     {
                         x.Named("Execute")
                             .Body("ExecuteHasBeenCalled = true;");

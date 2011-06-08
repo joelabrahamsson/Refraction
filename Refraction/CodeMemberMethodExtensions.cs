@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 
 namespace Refraction
 {
@@ -24,7 +25,12 @@ namespace Refraction
 
         public static CodeMemberMethod Parameter<TParameter>(this CodeMemberMethod method, string name)
         {
-            method.Parameters.Add(new CodeParameterDeclarationExpression(typeof(TParameter), name));
+            return method.Parameter(typeof (TParameter), name);
+        }
+
+        public static CodeMemberMethod Parameter(this CodeMemberMethod method, Type parameterType, string name)
+        {
+            method.Parameters.Add(new CodeParameterDeclarationExpression(parameterType, name));
             return method;
         }
 

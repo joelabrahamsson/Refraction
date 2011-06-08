@@ -15,5 +15,15 @@ namespace Refraction
             var type = instance.GetType();
             type.InvokeMember(name, bindingFlags, null, instance, arguments);
         }
+
+        public static bool IsNull(this object value)
+        {
+            return value == null;
+        }
+
+        public static bool IsNotNull(this object value)
+        {
+            return !value.IsNull();
+        }
     }
 }

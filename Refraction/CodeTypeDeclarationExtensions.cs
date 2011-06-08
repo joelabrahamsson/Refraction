@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -42,20 +43,110 @@ namespace Refraction
             type.BaseTypes.Add(typeof(TInterface));
 
             type.AddReferencedType<TInterface>();
+            AddDefaultImplementations(typeof(TInterface), type);
+            typeof(TInterface).GetBaseTypes().ToList()
+                .ForEach(x => 
+                {
+                    type.AddReferencedType(x);
+                    AddDefaultImplementations(x, type);
+                });
 
-            foreach (var methodInfo in typeof(TInterface).GetMethods())
+            return type;
+        }
+
+        static void AddDefaultImplementations(Type baseType, CodeTypeDeclaration type)
+        {
+            AutoImplementMethods(baseType, type);
+            AutoImplementProperties(baseType, type);
+        }
+
+        static bool NameAndParametersMatch(this CodeMemberMethod memberMethod, MethodInfo methodInfo)
+        {
+            if(!memberMethod.Name.Equals(methodInfo.Name))
             {
-                type.Method(x =>
+                return false;
+            }
+
+            if(memberMethod.Parameters.Count != methodInfo.GetParameters().Count())
+            {
+                return false;
+            }
+
+            for (int i = 0; i < memberMethod.Parameters.Count; i++)
+            {
+                if(memberMethod.Parameters[i].Type.BaseType.Equals(methodInfo.GetParameters()[i].ParameterType.FullName))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        static bool ReturnTypesMatch(this CodeMemberMethod memberMethod, MethodInfo methodInfo)
+        {
+            return memberMethod.ReturnType.BaseType.Equals(methodInfo.ReturnType.FullName);
+        }
+
+        static void AutoImplementMethods(Type baseType, CodeTypeDeclaration type)
+        {
+            foreach (var methodInfo in baseType.GetMethods().Where(x => !x.Name.StartsWith("get_") && !x.Name.StartsWith("set_")))
+            {
+                var implementExplicit = false;
+                if (type.Members.OfType<CodeMemberMethod>().Any(x => x.NameAndParametersMatch(methodInfo)))
+                {
+                    if (type.Members.OfType<CodeMemberMethod>().Any(x => x.ReturnTypesMatch(methodInfo)))
                     {
+                        continue;
+                    }
+                    implementExplicit = true;
+                }
+                type.PublicMethod(x =>
+                    {
+                        if (implementExplicit)
+                        {
+                            x.PrivateImplementationType = new CodeTypeReference(baseType);
+                        }
                         x.Named(methodInfo.Name);
                         x.Statements.Add(
                             new CodeThrowExceptionStatement(
                                 new CodeObjectCreateExpression(typeof (NotImplementedException), new CodeExpression[0])));
                         x.ReturnType = new CodeTypeReference(methodInfo.ReturnType);
+                        foreach (var parameterInfo in methodInfo.GetParameters())
+                        {
+                            x.Parameter(parameterInfo.ParameterType, parameterInfo.Name);
+                        }
                     });
             }
+        }
 
-            return type;
+        static void AutoImplementProperties(Type baseType, CodeTypeDeclaration type)
+        {
+            foreach (var propertyInfo in baseType.GetProperties())
+            {
+                if (type.Members.OfType<CodeMemberProperty>().Any(x => x.Name.Equals(propertyInfo.Name)))
+                {
+                    continue;
+                }
+
+                type.Property(propertyInfo.PropertyType, x =>
+                {
+                    x.Named(propertyInfo.Name)
+                        .GetStatements.Add(new CodeThrowExceptionStatement(
+                                               new CodeObjectCreateExpression(typeof(NotImplementedException),
+                                                                              new CodeExpression[0])));
+                    if(propertyInfo.GetSetMethod().IsNotNull())
+                    {
+                        x.SetStatements.Add(new CodeThrowExceptionStatement(
+                                            new CodeObjectCreateExpression(typeof (NotImplementedException),
+                                                                           new CodeExpression[0])));
+                    }
+                    foreach (var parameterInfo in propertyInfo.GetIndexParameters())
+                    {
+                        x.Parameters.Add(new CodeParameterDeclarationExpression(parameterInfo.ParameterType, parameterInfo.Name));
+                    }
+                });
+            }
         }
 
         public static CodeTypeDeclaration AnnotatedWith<TAttribute>(this CodeTypeDeclaration type)
@@ -85,8 +176,13 @@ namespace Refraction
 
         public static CodeTypeDeclaration Property<TProperty>(this CodeTypeDeclaration type, Action<CodeMemberProperty> propertyExpression)
         {
+            return type.Property(typeof (TProperty), propertyExpression);
+        }
+
+        public static CodeTypeDeclaration Property(this CodeTypeDeclaration type, Type propertyType, Action<CodeMemberProperty> propertyExpression)
+        {
             var property = new CodeMemberProperty();
-            property.Type = new CodeTypeReference(typeof(TProperty));
+            property.Type = new CodeTypeReference(propertyType);
             property.Attributes = MemberAttributes.Public;
             propertyExpression(property);
             type.Members.Add(property);
@@ -183,7 +279,7 @@ namespace Refraction
             return type;
         }
 
-        public static CodeTypeDeclaration Method(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
+        public static CodeTypeDeclaration PublicMethod(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
         {
             var method = new CodeMemberMethod();
             method.Attributes = MemberAttributes.Public;
@@ -192,7 +288,7 @@ namespace Refraction
             return type;
         }
 
-        public static CodeTypeDeclaration Method<TReturnType>(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
+        public static CodeTypeDeclaration PublicMethod<TReturnType>(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
         {
             var method = new CodeMemberMethod();
             method.Attributes = MemberAttributes.Public;
