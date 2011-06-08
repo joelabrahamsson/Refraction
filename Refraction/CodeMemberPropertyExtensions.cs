@@ -63,7 +63,12 @@ namespace Refraction
 
         public static CodeMemberProperty Returning(this CodeMemberProperty property, string stringConstant)
         {
-            return property.GetterBody("return \"{0}\";", stringConstant);   
+            if (stringConstant != null)
+            {
+                return property.GetterBody("return \"{0}\";", stringConstant);
+            }
+
+            return property.GetterBody("return null;");
         }
 
         public static CodeMemberProperty Returning(this CodeMemberProperty property, bool value)
