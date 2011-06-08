@@ -45,6 +45,49 @@ namespace Refraction.Specs
               assembly.GetTypeNamed(className).GetMethod(methodName).IsAbstract.ShouldBeTrue();
     }
 
+    public class abstract_property
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static string propertyName = "MethodName";
+
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+                with.Class(className)
+                    .Abstract()
+                    .AutomaticProperty<string>(x =>
+                    x.Named(propertyName)
+                     .Abstract()));
+        };
+
+        It should_create_property_with_abstract_getter
+            = () =>
+              assembly.GetTypeNamed(className).GetProperty(propertyName).GetGetMethod().IsAbstract.ShouldBeTrue();
+    }
+
+    public class automatic_interface_implementation
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static Exception thrownException;
+
+        Establish context = () =>
+        {
+            thrownException = Catch.Exception(() => 
+                assembly = Create.Assembly(with =>
+                    with.Class(className)
+                        .AutoImplementing<IDisposable>()));
+        };
+
+        It should_compile
+            = () =>
+              thrownException.ShouldBeNull();
+
+        It should_create_class_implementing_the_interface
+            = () => assembly.GetTypeNamed(className).GetInterfaces().ShouldContain(typeof (IDisposable));
+    }
+
     public class given_property_with_getter_snippet_implementation
     {
         static Assembly assembly;

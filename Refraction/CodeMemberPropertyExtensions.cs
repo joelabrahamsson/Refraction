@@ -5,6 +5,12 @@ namespace Refraction
 {
     public static class CodeMemberPropertyExtensions
     {
+        public static CodeMemberProperty Abstract(this CodeMemberProperty property)
+        {
+            property.Attributes = property.Attributes | MemberAttributes.Abstract;
+            return property;
+        }
+
         public static CodeMemberProperty AnnotatedWith<TAttribute>(this CodeMemberProperty property)
         {
             property.AnnotatedWith<TAttribute>(new object());

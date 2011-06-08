@@ -37,6 +37,27 @@ namespace Refraction
             return type;
         }
 
+        public static CodeTypeDeclaration AutoImplementing<TInterface>(this CodeTypeDeclaration type)
+        {
+            type.BaseTypes.Add(typeof(TInterface));
+
+            type.AddReferencedType<TInterface>();
+
+            foreach (var methodInfo in typeof(TInterface).GetMethods())
+            {
+                type.Method(x =>
+                    {
+                        x.Named(methodInfo.Name);
+                        x.Statements.Add(
+                            new CodeThrowExceptionStatement(
+                                new CodeObjectCreateExpression(typeof (NotImplementedException), new CodeExpression[0])));
+                        x.ReturnType = new CodeTypeReference(methodInfo.ReturnType);
+                    });
+            }
+
+            return type;
+        }
+
         public static CodeTypeDeclaration AnnotatedWith<TAttribute>(this CodeTypeDeclaration type)
         {
             return type.AnnotatedWith<TAttribute>(new object());
