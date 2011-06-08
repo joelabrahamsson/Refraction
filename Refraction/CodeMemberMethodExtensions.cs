@@ -4,6 +4,12 @@ namespace Refraction
 {
     public static class CodeMemberMethodExtensions
     {
+        public static CodeMemberMethod Abstract(this CodeMemberMethod method)
+        {
+            method.Attributes = method.Attributes | MemberAttributes.Abstract;
+            return method;
+        }
+
         public static CodeMemberMethod IsOverride(this CodeMemberMethod method)
         {
             method.Attributes = method.Attributes | MemberAttributes.Override;
