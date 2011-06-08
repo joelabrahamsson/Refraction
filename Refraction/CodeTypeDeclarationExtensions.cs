@@ -9,7 +9,7 @@ namespace Refraction
     {
         public static CodeTypeDeclaration Abstract(this CodeTypeDeclaration type)
         {
-            type.Attributes = type.Attributes | MemberAttributes.Abstract;
+            type.TypeAttributes = type.TypeAttributes | TypeAttributes.Abstract;
             return type;
         }
 

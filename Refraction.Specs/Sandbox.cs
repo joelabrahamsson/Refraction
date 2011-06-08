@@ -7,6 +7,44 @@ using Machine.Specifications;
 
 namespace Refraction.Specs
 {
+    public class abstract_class
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+                with.Class(className)
+                    .Abstract());
+        };
+
+        It should_create_abstract_class
+            = () =>
+              assembly.GetTypeNamed(className).IsAbstract.ShouldBeTrue();
+    }
+
+    public class abstract_method
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static string methodName = "MethodName";
+
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+                with.Class(className)
+                    .Abstract()
+                    .Method(x =>
+                    x.Named(methodName)
+                     .Abstract()));
+        };
+
+        It should_create_abstract_method
+            = () =>
+              assembly.GetTypeNamed(className).GetMethod(methodName).IsAbstract.ShouldBeTrue();
+    }
+
     public class given_property_with_getter_snippet_implementation
     {
         static Assembly assembly;
