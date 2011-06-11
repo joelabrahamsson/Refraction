@@ -1,4 +1,5 @@
-﻿using System.CodeDom;
+﻿using System;
+using System.CodeDom;
 using System.Reflection;
 
 namespace Refraction
@@ -19,12 +20,16 @@ namespace Refraction
 
         public static CodeMemberProperty AnnotatedWith<TAttribute>(this CodeMemberProperty property, object parameters, params object[] constructorParams)
         {
-            var ctorParams = new CodeAttributeArgument[constructorParams.Length];
-            for (int i = 0; i < constructorParams.Length; i++)
-            {
-                ctorParams[i] = new CodeAttributeArgument(null, new CodePrimitiveExpression(constructorParams[i]));
-            }
-            var attribute = new CodeAttributeDeclaration(new CodeTypeReference(typeof (TAttribute)), ctorParams);
+            property.AddReferencedType<TAttribute>();
+            var attributeType = new CodeTypeReference(typeof (TAttribute));
+            return property.AnnotatedWith(attributeType, parameters, constructorParams);
+        }
+
+
+        public static CodeMemberProperty AnnotatedWith(this CodeMemberProperty property, CodeTypeReference attributeType, object parameters, params object[] constructorParams)
+        {
+            CodeAttributeArgument[] ctorParams = GetCtorParams(constructorParams);
+            var attribute = new CodeAttributeDeclaration(attributeType, ctorParams);
             foreach (var propertyInfo in parameters.GetType().GetProperties())
             {
                 var parameterValue = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);
@@ -34,8 +39,29 @@ namespace Refraction
             }
             
             property.CustomAttributes.Add(attribute);
-            property.AddReferencedType<TAttribute>();
             return property;
+        }
+
+        static CodeAttributeArgument[] GetCtorParams(object[] constructorParams)
+        {
+            var ctorParams = new CodeAttributeArgument[constructorParams.Length];
+            for (int i = 0; i < constructorParams.Length; i++)
+            {
+                var ctorParam = constructorParams[i];
+                if(ctorParam is Type)
+                {
+                    ctorParams[i] = new CodeAttributeArgument(null, new CodeTypeReferenceExpression((Type)ctorParam));
+                }
+                else if(ctorParam is CodeTypeDeclaration)
+                {
+                    ctorParams[i] = new CodeAttributeArgument(null, new CodeTypeOfExpression(((CodeTypeDeclaration) ctorParam).Name));
+                }
+                else
+                {
+                    ctorParams[i] = new CodeAttributeArgument(null, new CodePrimitiveExpression(constructorParams[i]));   
+                }
+            }
+            return ctorParams;
         }
 
         public static CodeMemberProperty Named(this CodeMemberProperty property, string name)

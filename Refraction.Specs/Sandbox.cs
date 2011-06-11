@@ -7,6 +7,40 @@ using Machine.Specifications;
 
 namespace Refraction.Specs
 {
+    public class ExampleAttribute : Attribute
+    {
+        public ExampleAttribute(Type type)
+        {
+            Type = type;
+        }
+
+        public Type Type { get; set; }
+    }
+    public class property_annotated_with_attribute_refering_to_generated_type
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static string propertyName = "MyProperty";
+
+        Establish context = () =>
+            {
+                assembly = Create.Assembly(with => {
+                    var referenced = with.Class("Sample");
+
+                    with.Class(className)
+                    .AutomaticProperty<string>(x =>
+                    x.Named(propertyName)
+                    .AnnotatedWith<ExampleAttribute>(new object(), referenced));
+                });
+            };
+
+        It should =
+            () =>
+            assembly.GetTypeNamed(className).GetProperty(propertyName).GetCustomAttributes(typeof (ExampleAttribute),
+                                                                                           false).ShouldNotBeNull();
+    }
+
+    //TODO: Test non-primitive values, or add restrictions
     [Subject(typeof(CodeMemberMethodExtensions), "ReturnValue")]
     public class invoking_method_on_type_with_method_returning_string_constant
     {
