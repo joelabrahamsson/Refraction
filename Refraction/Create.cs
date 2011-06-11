@@ -18,6 +18,7 @@ namespace Refraction
         public static CodeTypeDeclaration Class(this CodeCompileUnit assembly, string className)
         {
             var defaultNamespace = new CodeNamespace(DefaultNamespaceName);
+            defaultNamespace.Imports.Add(new CodeNamespaceImport("System"));
             assembly.Namespaces.Add(defaultNamespace);
             var type = new CodeTypeDeclaration(className);
             defaultNamespace.Types.Add(type);

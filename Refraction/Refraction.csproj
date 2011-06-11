@@ -51,6 +51,7 @@
     </Compile>
     <Compile Include="AssemblyDefinition.cs" />
     <Compile Include="AssemblyExtensions.cs" />
+    <Compile Include="BaseImplementation.cs" />
     <Compile Include="CodeCompileUnitExtensions.cs" />
     <Compile Include="CodeMemberFieldExtensions.cs" />
     <Compile Include="CodeMemberMethodExtensions.cs" />
@@ -61,8 +62,10 @@
     <Compile Include="CodeTypeDeclarationExtensions.cs" />
     <Compile Include="Create.cs" />
     <Compile Include="NamespaceDefinition.cs" />
+    <Compile Include="NonVoidMethodDefinition.cs" />
     <Compile Include="ObjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticReflection.cs" />
     <Compile Include="TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

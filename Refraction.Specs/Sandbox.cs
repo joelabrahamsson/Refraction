@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
@@ -8,7 +7,32 @@ using Machine.Specifications;
 
 namespace Refraction.Specs
 {
-    public class abstract_class
+    [Subject(typeof(CodeMemberMethodExtensions), "ReturnValue")]
+    public class invoking_method_on_type_with_method_returning_string_constant
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+        static string methodName = "SayHi";
+        static string returnValue = Guid.NewGuid().ToString();
+
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+                    with.Class(className)
+                    .PublicMethod<string>(x => 
+                        x.Named(methodName)
+                         .ReturnValue(returnValue)));
+        };
+
+        It should_return_the_string_constant
+            = () =>
+              assembly.GetTypeInstance(className).InvokeMember<string>(methodName, BindingFlags.InvokeMethod, new object[0]).
+                  ShouldEqual(returnValue);
+              
+    }
+
+    [Subject(typeof(CodeTypeDeclarationExtensions), "Abstract")]
+    public class when_invoked_on_a_CodeTypeDeclaration
     {
         static Assembly assembly;
         static string className = "ClassName";
@@ -65,28 +89,6 @@ namespace Refraction.Specs
         It should_create_property_with_abstract_getter
             = () =>
               assembly.GetTypeNamed(className).GetProperty(propertyName).GetGetMethod().IsAbstract.ShouldBeTrue();
-    }
-
-    public class automatic_interface_implementation
-    {
-        static Assembly assembly;
-        static string className = "ClassName";
-        static Exception thrownException;
-
-        Establish context = () =>
-        {
-            thrownException = Catch.Exception(() => 
-                assembly = Create.Assembly(with =>
-                    with.Class(className)
-                        .AutoImplementing<IDisposable>()));
-        };
-
-        It should_compile
-            = () =>
-              thrownException.ShouldBeNull();
-
-        It should_create_class_implementing_the_interface
-            = () => assembly.GetTypeNamed(className).GetInterfaces().ShouldContain(typeof (IDisposable));
     }
 
     public class automatic_interface_with_property_implementation

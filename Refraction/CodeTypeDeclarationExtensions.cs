@@ -40,9 +40,18 @@ namespace Refraction
 
         public static CodeTypeDeclaration AutoImplementing<TInterface>(this CodeTypeDeclaration type)
         {
+            return type.AutoImplementing<TInterface>(x => { });
+        }
+
+        public static CodeTypeDeclaration AutoImplementing<TInterface>(this CodeTypeDeclaration type, Action<BaseImplementation<TInterface>> implementations)
+        {
             type.BaseTypes.Add(typeof(TInterface));
 
             type.AddReferencedType<TInterface>();
+            
+            var baseImplementation = new BaseImplementation<TInterface>(type);
+            implementations(baseImplementation);
+
             AddDefaultImplementations(typeof(TInterface), type);
             typeof(TInterface).GetBaseTypes().ToList()
                 .ForEach(x => 
@@ -288,9 +297,9 @@ namespace Refraction
             return type;
         }
 
-        public static CodeTypeDeclaration PublicMethod<TReturnType>(this CodeTypeDeclaration type, Action<CodeMemberMethod> methodExpression)
+        public static CodeTypeDeclaration PublicMethod<TReturnType>(this CodeTypeDeclaration type, Action<NonVoidMethodDefinition<TReturnType>> methodExpression)
         {
-            var method = new CodeMemberMethod();
+            var method = new NonVoidMethodDefinition<TReturnType>();
             method.Attributes = MemberAttributes.Public;
             method.ReturnType = new CodeTypeReference(typeof(TReturnType));
             methodExpression(method);

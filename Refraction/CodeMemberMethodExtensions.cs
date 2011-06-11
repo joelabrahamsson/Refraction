@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Linq.Expressions;
 
 namespace Refraction
 {
@@ -17,7 +18,8 @@ namespace Refraction
             return method;
         }
 
-        public static CodeMemberMethod Named(this CodeMemberMethod method, string name)
+        public static TMethod Named<TMethod>(this TMethod method, string name)
+            where TMethod : CodeMemberMethod
         {
             method.Name = name;
             return method;
@@ -37,6 +39,12 @@ namespace Refraction
         public static CodeMemberMethod Body(this CodeMemberMethod method, string methodBody)
         {
             method.Statements.Add(new CodeSnippetExpression(methodBody));
+            return method;
+        }
+
+        public static NonVoidMethodDefinition<TReturnType> ReturnValue<TReturnType>(this NonVoidMethodDefinition<TReturnType> method, TReturnType value)
+        {
+            method.Statements.Add(new CodeMethodReturnStatement(new CodePrimitiveExpression(value)));
             return method;
         }
 
