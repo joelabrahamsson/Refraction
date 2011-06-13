@@ -12,6 +12,16 @@ namespace Refraction
             return (TValue)type.InvokeMember(name, bindingFlags, null, null, arguments);
         }
 
+        public static TValue GetPublicStaticPropertyValue<TValue>(this Type type, string name)
+        {
+            return (TValue)type.InvokeMember(name, BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.Static, null, null, new object[0]);
+        }
+
+        public static void SetPublicStaticPropertyValue<TValue>(this Type type, string name, TValue value)
+        {
+            type.InvokeMember(name, BindingFlags.Public | BindingFlags.SetProperty | BindingFlags.Static, value);
+        }
+
         public static void InvokeMember(this Type type, string name, BindingFlags bindingFlags, params object[] arguments)
         {
             type.InvokeMember(name, bindingFlags, null, null, arguments);
