@@ -16,10 +16,10 @@ namespace Refraction
             return assembly.GetTypes().Where(t => t.Name.Equals(name)).First();
         }
 
-        public static object GetTypeInstance(this Assembly assembly, string name)
+        public static object GetTypeInstance(this Assembly assembly, string name, params object[] ctorArguments)
         {
             var type = assembly.GetTypeNamed(name);
-            return Activator.CreateInstance(type);
+            return Activator.CreateInstance(type, ctorArguments);
         }
     }
 }

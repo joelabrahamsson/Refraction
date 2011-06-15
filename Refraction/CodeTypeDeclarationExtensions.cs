@@ -307,6 +307,15 @@ namespace Refraction
             return type;
         }
 
+        public static CodeTypeDeclaration Constructor(this CodeTypeDeclaration type, Action<CodeConstructor> constructorExpression)
+        {
+            var constructor = new CodeConstructor();
+            constructor.Attributes = MemberAttributes.Public;
+            constructorExpression(constructor);
+            type.Members.Add(constructor);
+            return type;
+        }
+
         public static CodeTypeDeclaration PrivateField<TField>(this CodeTypeDeclaration type, Action<CodeMemberField> fieldExpression)
         {
             var field = new CodeMemberField();

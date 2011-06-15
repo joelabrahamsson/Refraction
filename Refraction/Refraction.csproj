@@ -53,6 +53,7 @@
     <Compile Include="AssemblyExtensions.cs" />
     <Compile Include="BaseImplementation.cs" />
     <Compile Include="CodeCompileUnitExtensions.cs" />
+    <Compile Include="CodeConstructorExtensions.cs" />
     <Compile Include="CodeMemberFieldExtensions.cs" />
     <Compile Include="CodeMemberMethodExtensions.cs" />
     <Compile Include="CodeMemberPropertyExtensions.cs" />

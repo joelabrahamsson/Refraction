@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections;
 using System.Diagnostics;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Refraction.Specs
 
         public Type Type { get; set; }
     }
+
     public class property_annotated_with_attribute_refering_to_generated_type
     {
         static Assembly assembly;
@@ -63,6 +65,57 @@ namespace Refraction.Specs
               assembly.GetTypeInstance(className).InvokeMember<string>(methodName, BindingFlags.InvokeMethod, new object[0]).
                   ShouldEqual(returnValue);
               
+    }
+
+    public class when_created_type_with_constructor_with_two_parameters
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+                with.Class(className)
+                .Constructor(x =>
+                    {
+                        x.Parameter<string>("stringParam")
+                            .Parameter<int>("intParam");
+                    }));
+        };
+
+        It should_be_possible_to_instantiate_it_by_passing_two_parameters_to_the_constructor
+            = () =>
+              assembly.GetTypeInstance(className, "", 1).ShouldNotBeNull();
+    }
+
+    public class when_created_type_inherits_type_with_constructor_parameter
+    {
+        static Assembly assembly;
+        static string className = "ClassName";
+
+        Establish context = () =>
+        {
+            assembly = Create.Assembly(with =>
+                {
+                    with.Class("baseClass")
+                        .Constructor(x =>
+                            {
+                                x.Parameter<string>("stringParam");
+                            });
+
+                    with.Class(className)
+                        .Inheriting("baseClass")
+                        .Constructor(x =>
+                            {
+                                x.Parameter<string>("stringParam")
+                                    .PassToBase("stringParam");
+                            });
+                });
+        };
+
+        It should_be_possible_to_instantiate_it_by_passing_two_parameters_to_the_constructor
+            = () =>
+              assembly.GetTypeInstance(className, "").ShouldNotBeNull();
     }
 
     [Subject(typeof(CodeTypeDeclarationExtensions), "Abstract")]
