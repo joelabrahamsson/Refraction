@@ -36,7 +36,7 @@ namespace Refraction
                 CodeExpression parameterValue;
                 if (value is Type)
                 {
-                    parameterValue = new CodeTypeReferenceExpression((Type)value);
+                    parameterValue = new CodeTypeOfExpression((Type)value);
                 }
                 else if (value is CodeTypeDeclaration)
                 {

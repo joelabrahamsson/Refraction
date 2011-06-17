@@ -34,7 +34,7 @@ namespace Refraction.Specs
                     with.Class(className)
                     .AutomaticProperty<string>(x =>
                     x.Named(propertyName)
-                    .AnnotatedWith<ExampleAttribute>(new { Type2 = referenced }, referenced));
+                    .AnnotatedWith<ExampleAttribute>(new { Type2 = typeof(ExampleAttribute) }, referenced));
                 });
             };
 
