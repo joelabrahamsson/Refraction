@@ -32,10 +32,23 @@ namespace Refraction
             var attribute = new CodeAttributeDeclaration(attributeType, ctorParams);
             foreach (var propertyInfo in parameters.GetType().GetProperties())
             {
-                var parameterValue = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);
+                var value = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);
+                CodeExpression parameterValue;
+                if (value is Type)
+                {
+                    parameterValue = new CodeTypeReferenceExpression((Type)value);
+                }
+                else if (value is CodeTypeDeclaration)
+                {
+                    parameterValue = new CodeTypeOfExpression(((CodeTypeDeclaration)value).Name);
+                }
+                else
+                {
+                    parameterValue = new CodePrimitiveExpression(value);
+                }
+                
                 var parameterName = propertyInfo.Name;
-                attribute.Arguments.Add(new CodeAttributeArgument(parameterName,
-                                                                  new CodePrimitiveExpression(parameterValue)));
+                attribute.Arguments.Add(new CodeAttributeArgument(parameterName, parameterValue));
             }
             
             property.CustomAttributes.Add(attribute);

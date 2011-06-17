@@ -16,6 +16,8 @@ namespace Refraction.Specs
         }
 
         public Type Type { get; set; }
+
+        public Type Type2 { get; set; }
     }
 
     public class property_annotated_with_attribute_refering_to_generated_type
@@ -32,7 +34,7 @@ namespace Refraction.Specs
                     with.Class(className)
                     .AutomaticProperty<string>(x =>
                     x.Named(propertyName)
-                    .AnnotatedWith<ExampleAttribute>(new object(), referenced));
+                    .AnnotatedWith<ExampleAttribute>(new { Type2 = referenced }, referenced));
                 });
             };
 
