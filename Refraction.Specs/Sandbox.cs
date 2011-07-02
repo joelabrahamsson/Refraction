@@ -18,6 +18,8 @@ namespace Refraction.Specs
         public Type Type { get; set; }
 
         public Type Type2 { get; set; }
+
+        public ConsoleKey Key { get; set; }
     }
 
     public class property_annotated_with_attribute_refering_to_generated_type
@@ -34,14 +36,24 @@ namespace Refraction.Specs
                     with.Class(className)
                     .AutomaticProperty<string>(x =>
                     x.Named(propertyName)
-                    .AnnotatedWith<ExampleAttribute>(new { Type2 = typeof(ExampleAttribute) }, referenced));
+                    .AnnotatedWith<ExampleAttribute>(new { Type2 = typeof(DebuggerDisplayAttribute), Key = ConsoleKey.Zoom }, referenced));
                 });
             };
 
         It should =
             () =>
             assembly.GetTypeNamed(className).GetProperty(propertyName).GetCustomAttributes(typeof (ExampleAttribute),
-                                                                                           false).ShouldNotBeNull();
+                                                                                           false).ShouldNotBeEmpty();
+        It should2 =
+            () =>
+            assembly.GetTypeNamed(className).GetProperty(propertyName).GetCustomAttributes(typeof(ExampleAttribute),
+                                                                                           false).OfType<ExampleAttribute>().First().Type2.ShouldNotBeNull();
+
+        It should3 =
+           () =>
+           assembly.GetTypeNamed(className).GetProperty(propertyName).GetCustomAttributes(typeof(ExampleAttribute),
+                                                                                          false).OfType<ExampleAttribute>().First().Key.ShouldEqual(ConsoleKey.Zoom);
+        
     }
 
     //TODO: Test non-primitive values, or add restrictions

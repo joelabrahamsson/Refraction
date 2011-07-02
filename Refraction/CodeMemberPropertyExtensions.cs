@@ -42,6 +42,10 @@ namespace Refraction
                 {
                     parameterValue = new CodeTypeOfExpression(((CodeTypeDeclaration)value).Name);
                 }
+                else if (value is Enum)
+                {
+                    parameterValue = new CodeCastExpression(propertyInfo.PropertyType, new CodePrimitiveExpression((int)value));
+                }
                 else
                 {
                     parameterValue = new CodePrimitiveExpression(value);
