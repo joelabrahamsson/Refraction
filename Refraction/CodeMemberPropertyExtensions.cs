@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Linq;
 using System.Reflection;
 
 namespace Refraction
@@ -25,11 +26,11 @@ namespace Refraction
             return property.AnnotatedWith(attributeType, parameters, constructorParams);
         }
 
-
         public static CodeMemberProperty AnnotatedWith(this CodeMemberProperty property, CodeTypeReference attributeType, object parameters, params object[] constructorParams)
         {
             CodeAttributeArgument[] ctorParams = GetCtorParams(constructorParams);
             var attribute = new CodeAttributeDeclaration(attributeType, ctorParams);
+
             foreach (var propertyInfo in parameters.GetType().GetProperties())
             {
                 var value = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);
@@ -46,15 +47,22 @@ namespace Refraction
                 {
                     parameterValue = new CodeCastExpression(propertyInfo.PropertyType, new CodePrimitiveExpression((int)value));
                 }
+                else if (value is Type[])
+                {
+                    CodeExpression[] codeExpressions = (value as Type[])
+                        .Select(currentType => new CodeTypeOfExpression(currentType)).ToArray();
+
+                    parameterValue = new CodeArrayCreateExpression(typeof(Type[]), codeExpressions);
+                }
                 else
                 {
                     parameterValue = new CodePrimitiveExpression(value);
                 }
-                
+
                 var parameterName = propertyInfo.Name;
                 attribute.Arguments.Add(new CodeAttributeArgument(parameterName, parameterValue));
             }
-            
+
             property.CustomAttributes.Add(attribute);
             return property;
         }

@@ -170,18 +170,45 @@ namespace Refraction
             {
                 ctorParams[i] = new CodeAttributeArgument(null, new CodePrimitiveExpression(constructorParams[i]));
             }
-            var attribute = new CodeAttributeDeclaration(new CodeTypeReference(typeof (TAttribute)), ctorParams);
+            var attribute = new CodeAttributeDeclaration(new CodeTypeReference(typeof(TAttribute)), ctorParams);
+
             foreach (var propertyInfo in parameters.GetType().GetProperties())
             {
-                var parameterValue = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);
+                var value = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);
+                CodeExpression parameterValue;
+                if (value is Type)
+                {
+                    parameterValue = new CodeTypeOfExpression((Type)value);
+                }
+                else if (value is CodeTypeDeclaration)
+                {
+                    parameterValue = new CodeTypeOfExpression(((CodeTypeDeclaration)value).Name);
+                }
+                else if (value is Enum)
+                {
+                    parameterValue = new CodeCastExpression(propertyInfo.PropertyType, new CodePrimitiveExpression((int)value));
+                }
+                else if (value is Type[])
+                {
+                    CodeExpression[] codeExpressions = (value as Type[])
+                        .Select(currentType => new CodeTypeOfExpression(currentType)).ToArray();
+
+                    parameterValue = new CodeArrayCreateExpression(typeof(Type[]), codeExpressions);
+                }
+                else
+                {
+                    parameterValue = new CodePrimitiveExpression(value);
+                }
+
                 var parameterName = propertyInfo.Name;
-                attribute.Arguments.Add(new CodeAttributeArgument(parameterName,
-                                                                  new CodePrimitiveExpression(parameterValue)));
+                attribute.Arguments.Add(new CodeAttributeArgument(parameterName, parameterValue));
+
             }
-            
+
             type.CustomAttributes.Add(attribute);
             return type;
         }
+
 
         public static CodeTypeDeclaration Property<TProperty>(this CodeTypeDeclaration type, Action<CodeMemberProperty> propertyExpression)
         {
