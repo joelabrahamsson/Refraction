@@ -24,5 +24,15 @@ namespace Refraction
             defaultNamespace.Types.Add(type);
             return type;
         }
+
+        public static CodeTypeDeclaration Interface(this CodeCompileUnit assembly, string interfaceName)
+        {
+            var defaultNamespace = new CodeNamespace(DefaultNamespaceName);
+            assembly.Namespaces.Add(defaultNamespace);
+            var type = new CodeTypeDeclaration(interfaceName);
+            type.TypeAttributes = TypeAttributes.Public | TypeAttributes.Interface;
+            defaultNamespace.Types.Add(type);
+            return type;
+        }
     }
 }

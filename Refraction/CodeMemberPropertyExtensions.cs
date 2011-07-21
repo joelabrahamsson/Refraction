@@ -26,11 +26,11 @@ namespace Refraction
             return property.AnnotatedWith(attributeType, parameters, constructorParams);
         }
 
+
         public static CodeMemberProperty AnnotatedWith(this CodeMemberProperty property, CodeTypeReference attributeType, object parameters, params object[] constructorParams)
         {
             CodeAttributeArgument[] ctorParams = GetCtorParams(constructorParams);
             var attribute = new CodeAttributeDeclaration(attributeType, ctorParams);
-
             foreach (var propertyInfo in parameters.GetType().GetProperties())
             {
                 var value = parameters.GetType().InvokeMember(propertyInfo.Name, BindingFlags.GetProperty, null, parameters, null);
@@ -54,15 +54,21 @@ namespace Refraction
 
                     parameterValue = new CodeArrayCreateExpression(typeof(Type[]), codeExpressions);
                 }
+                else if (value is CodeTypeDeclaration[])
+                {
+                    CodeExpression[] codeExpressions = (value as CodeTypeDeclaration[])
+                        .Select(current => new CodeTypeOfExpression(current.Name)).ToArray();
+                    parameterValue = new CodeArrayCreateExpression(typeof(Type[]), codeExpressions);
+                }
                 else
                 {
                     parameterValue = new CodePrimitiveExpression(value);
                 }
-
+                
                 var parameterName = propertyInfo.Name;
                 attribute.Arguments.Add(new CodeAttributeArgument(parameterName, parameterValue));
             }
-
+            
             property.CustomAttributes.Add(attribute);
             return property;
         }
