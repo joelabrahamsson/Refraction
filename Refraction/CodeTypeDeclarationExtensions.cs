@@ -38,6 +38,12 @@ namespace Refraction
             return type;
         }
 
+        public static CodeTypeDeclaration Implementing(this CodeTypeDeclaration type, CodeTypeDeclaration interfaceType)
+        {
+            type.BaseTypes.Add(new CodeTypeOfExpression(interfaceType.Name).Type);
+            return type;
+        }
+
         public static CodeTypeDeclaration AutoImplementing<TInterface>(this CodeTypeDeclaration type)
         {
             return type.AutoImplementing<TInterface>(x => { });
@@ -170,7 +176,7 @@ namespace Refraction
             {
                 ctorParams[i] = new CodeAttributeArgument(null, new CodePrimitiveExpression(constructorParams[i]));
             }
-            var attribute = new CodeAttributeDeclaration(new CodeTypeReference(typeof(TAttribute)), ctorParams);
+            var attribute = new CodeAttributeDeclaration(new CodeTypeReference(typeof (TAttribute)), ctorParams);
 
             foreach (var propertyInfo in parameters.GetType().GetProperties())
             {
@@ -195,6 +201,12 @@ namespace Refraction
 
                     parameterValue = new CodeArrayCreateExpression(typeof(Type[]), codeExpressions);
                 }
+                else if (value is CodeTypeDeclaration[])
+                {
+                    CodeExpression[] codeExpressions = (value as CodeTypeDeclaration[])
+                        .Select(current => new CodeTypeOfExpression(current.Name)).ToArray();
+                    parameterValue = new CodeArrayCreateExpression(typeof(Type[]), codeExpressions);
+                }
                 else
                 {
                     parameterValue = new CodePrimitiveExpression(value);
@@ -202,13 +214,11 @@ namespace Refraction
 
                 var parameterName = propertyInfo.Name;
                 attribute.Arguments.Add(new CodeAttributeArgument(parameterName, parameterValue));
-
             }
 
             type.CustomAttributes.Add(attribute);
             return type;
         }
-
 
         public static CodeTypeDeclaration Property<TProperty>(this CodeTypeDeclaration type, Action<CodeMemberProperty> propertyExpression)
         {
